@@ -318,6 +318,48 @@ def seed_trajetos_comuns(session, filepath):
     print(f"{count} registros inseridos na tabela 'trajetos_comuns'.")
 
 
+def seed_appbit_data(session):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    appbit_dir = next(
+        (
+            path
+            for path in (
+                os.path.join(script_dir, "..", "..", "appbit"),
+                os.path.join(script_dir, "..", "appbit"),
+                "/appbit",
+                "/app/appbit",
+            )
+            if os.path.isdir(path)
+        ),
+        None,
+    )
+    if not appbit_dir:
+        print("Diretório appbit não encontrado; carga automática ignorada.")
+        return
+
+    seeds = [
+        (Antena, "dataset-visent/referencias/antenas_flp.csv", seed_antenas),
+        (Assinante, "dataset-visent/referencias/assinantes.csv", seed_assinantes),
+        (TrajetosComuns, "dataset-visent/referencias/trajetos_comuns.csv", seed_trajetos_comuns),
+        (TensorConcentracao, "dataset-visent/tensores/tensor_concentracao.csv", seed_tensor_concentracao),
+        (TensorFluxoVias, "dataset-visent/tensores/tensor_fluxo_vias.csv", seed_tensor_fluxo_vias),
+        (TensorOD, "dataset-visent/tensores/tensor_od.csv", seed_tensor_od),
+        (TensorTempoDeslocamento, "dataset-visent/tensores/tensor_tempo_deslocamento.csv", seed_tensor_tempo_deslocamento),
+    ]
+    files = [(model, os.path.join(appbit_dir, relative_path), seed) for model, relative_path, seed in seeds]
+    missing_files = [filepath for _, filepath, _ in files if not os.path.isfile(filepath)]
+    if missing_files:
+        raise FileNotFoundError(f"Arquivos do dataset appbit ausentes: {', '.join(missing_files)}")
+
+    if any(session.query(model).first() is not None for model, _, _ in files):
+        print("Dados do dataset já existem; carga automática ignorada.")
+        return
+
+    print(f"A carregar automaticamente os dados de {appbit_dir}...")
+    for _, filepath, seed in files:
+        seed(session, filepath)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Seed do banco de dados a partir dos CSVs do appbit")
     parser.add_argument("--appbit-dir", type=str, default=None, help="Caminho personalizado para o diretório appbit")

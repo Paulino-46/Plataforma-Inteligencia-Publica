@@ -18,12 +18,29 @@ from app.models.tensor_tempo_deslocamento import TensorTempoDeslocamento
 from app.models.trajetos_comuns import TrajetosComuns
 
 from contextlib import asynccontextmanager
+from sqlalchemy import text
+from sqlalchemy.orm import Session
+from scripts.seed_data import seed_appbit_data
+
+_APPBIT_SEED_LOCK_ID = 72610001
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
         Base.metadata.create_all(bind=engine)
         print("Tabelas criadas/verificadas com sucesso no banco de dados remoto.")
+        with engine.connect() as connection:
+            has_advisory_lock = engine.dialect.name == "postgresql"
+            if has_advisory_lock:
+                connection.execute(text("SELECT pg_advisory_lock(:lock_id)"), {"lock_id": _APPBIT_SEED_LOCK_ID})
+                connection.commit()
+            try:
+                with Session(bind=connection) as session:
+                    seed_appbit_data(session)
+            finally:
+                if has_advisory_lock:
+                    connection.execute(text("SELECT pg_advisory_unlock(:lock_id)"), {"lock_id": _APPBIT_SEED_LOCK_ID})
+                    connection.commit()
     except Exception as e:
         print(f"Alerta: Não foi possível conectar ao banco de dados no startup: {e}")
         print("O servidor continuará rodando, mas requisições ao banco podem falhar.")
