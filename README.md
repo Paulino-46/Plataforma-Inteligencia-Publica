@@ -21,8 +21,8 @@ Web app responsiva com agente de IA para emprego, formação e saúde mental, de
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/No-Country-simulation/S06-26-AB-Equipe-14.git
-cd S06-26-AB-Equipe-14
+git clone https://github.com/ticnes-scholarship/application_2026_Paulino_Goncalves_Bambuca.git
+cd application_2026_Paulino_Goncalves_Bambuca
 ```
 
 ### 2. Configurar variáveis de ambiente
@@ -196,6 +196,10 @@ As tabelas são criadas automaticamente ao iniciar o servidor (via `Base.metadat
 
 ---
 
-##  Equipe 14
+##  Paulino 
 
 Projecto desenvolvido durante a simulação No Country — S06-26-AB.
+
+## Link para acesso 
+
+https://plataforma-inteligencia-publica.vercel.app/
