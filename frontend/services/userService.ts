@@ -1,7 +1,7 @@
 // src/services/userService.ts
 
-// URL base vinda diretamente do .env (https://s06-26-ab-equipe-14.onrender.com/api)
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://s06-26-ab-equipe-14.onrender.com/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://plataforma-inteligencia-publica.onrender.com";
+const API_BASE = `${API_URL.replace(/\/+$/, "").replace(/\/api$/, "")}/api`;
 
 export interface UserRequest {
   email: string;
