@@ -499,7 +499,12 @@ class VisentService:
 
         return {
             "total": total,
-            "por_tecnologia": _group_count(Antena.tecnologia),
+            "por_tecnologia": _group_count(
+                func.coalesce(
+                    func.nullif(func.trim(Antena.tecnologia), ""),
+                    "Desconhecida",
+                )
+            ),
             "por_municipio": _group_count(Antena.municipio),
             "por_cluster": _group_count(Antena.cluster),
         }

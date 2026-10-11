@@ -99,7 +99,7 @@ export const dadosApi = {
   fluxoViasStats: () => fetchStats<FluxoViasStats>("tensor_fluxovias"),
   odStats: () => fetchStats<ODStats>("tensorod"),
   cruzamento: (fontes: string, regiao?: string) =>
-    fetchStats<any[]>(`cruzamento?fontes=${encodeURIComponent(fontes)}${regiao ? `&regiao=${encodeURIComponent(regiao)}` : ""}`),
+    fetchStats<unknown[]>(`cruzamento?fontes=${encodeURIComponent(fontes)}${regiao ? `&regiao=${encodeURIComponent(regiao)}` : ""}`),
 };
 
 
