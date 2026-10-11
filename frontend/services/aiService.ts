@@ -10,9 +10,10 @@
 //
 // A resposta é JSON não-streaming; este cliente simula a escrita token-a-token
 // (via onToken) para manter o efeito "a escrever" na UI.
-// Se o endpoint falhar, cai num mock local para não bloquear o frontend.
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '/api';
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  'https://plataforma-inteligencia-publica.onrender.com';
+const API_BASE = `${API_URL.replace(/\/+$/, '').replace(/\/api$/, '')}/api`;
 const AI_ENDPOINT = `${API_BASE}/dados`;
 
 export interface ChatMessage {
@@ -58,9 +59,17 @@ export async function askAI(query: string, opts: AskOptions = {}): Promise<strin
       throw new Error(`HTTP ${res.status}`);
     }
 
-    const data = await res.json();
+    const data: unknown = await res.json();
+    if (typeof data !== 'object' || data === null) {
+      throw new Error('A API devolveu uma resposta inválida.');
+    }
+    const response = data as Record<string, unknown>;
     const answer: string =
-      data.resposta_ia ?? data.answer ?? data.response ?? data.content ?? '';
+      (typeof response.resposta_ia === 'string' && response.resposta_ia) ||
+      (typeof response.answer === 'string' && response.answer) ||
+      (typeof response.response === 'string' && response.response) ||
+      (typeof response.content === 'string' && response.content) ||
+      '';
 
     if (!answer) throw new Error('Resposta vazia do agente');
 
@@ -71,8 +80,9 @@ export async function askAI(query: string, opts: AskOptions = {}): Promise<strin
     return answer;
   } catch (err) {
     if (err instanceof DOMException && err.name === 'AbortError') throw err;
-    // Endpoint indisponível / erro → mock para não bloquear o frontend.
-    return mockStream(query, opts);
+    throw err instanceof Error
+      ? err
+      : new Error('Não foi possível contactar o Agente de AI.');
   }
 }
 
@@ -84,26 +94,6 @@ async function simulateStream(text: string, opts: AskOptions): Promise<void> {
     await new Promise((r) => setTimeout(r, 25));
     opts.onToken?.((i === 0 ? '' : ' ') + tokens[i]);
   }
-}
-
-/* ------------------------------------------------------------------ */
-/* Mock de emergência (usado só se o backend falhar)                   */
-/* ------------------------------------------------------------------ */
-
-const MOCK_PREFIX = '[modo offline] ';
-
-function buildMockAnswer(query: string): string {
-  return (
-    `${MOCK_PREFIX}Não foi possível contactar o Agente de AI. ` +
-    `Verifica se o backend está ativo e se a COHERE_API_KEY está configurada. ` +
-    `A tua pergunta foi: "${query}".`
-  );
-}
-
-async function mockStream(query: string, opts: AskOptions): Promise<string> {
-  const answer = buildMockAnswer(query);
-  await simulateStream(answer, opts);
-  return answer;
 }
 
 export default { askAI };

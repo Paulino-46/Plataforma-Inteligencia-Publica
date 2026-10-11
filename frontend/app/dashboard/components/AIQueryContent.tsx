@@ -47,12 +47,16 @@ export default function AIQueryContent() {
         ...prev.slice(0, -1),
         { role: 'ai', content: full || currentText, timestamp: 'Gerado agora' },
       ]);
-    } catch {
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : 'Não foi possível contactar o Agente de AI. Tenta novamente.';
       setMessages(prev => [
         ...prev.slice(0, -1),
         {
           role: 'ai',
-          content: 'Não foi possível obter resposta do Agente de AI. Tenta novamente.',
+          content: `Erro ao contactar o Agente de AI: ${message}`,
           timestamp: 'Erro',
         },
       ]);
