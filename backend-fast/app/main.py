@@ -40,6 +40,7 @@ if not origins:
     origins = [
         "http://localhost:3000",
         "http://localhost:3003",
+        "https://plataforma-inteligencia-publica.vercel.app",
     ]
 
 app.add_middleware(
