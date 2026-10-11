@@ -1,0 +1,44 @@
+services:
+
+  backend:
+    build:
+      context: ./backend-fast
+      dockerfile: Dockerfile
+    container_name: appbit-backend
+    ports:
+      - "8000:8000"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    env_file:
+      - .env
+    volumes:
+      - ./backend-fast:/app
+      - ./appbit:/appbit
+    command: >
+      sh -c "uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: appbit-frontend
+    ports:
+      - "3003:3003"
+    env_file:
+      - .env
+    environment:
+      - BACKEND_INTERNAL_URL=http://backend:8000
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    command: npm run dev -- -p 3003
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+volumes:
+  frontend_node_modules:
