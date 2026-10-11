@@ -47,7 +47,7 @@ export default function MapContent() {
         setLocations(data);
         setError(null);
       })
-      .catch(() => alive && setError('Não foi possível carregar os pontos do mapa.'))
+      .catch(() => alive && setError('Não foi possível carregar os dados do mapa. Verifique a ligação e a autenticação da API.'))
       .finally(() => alive && setLoading(false));
     return () => {
       alive = false;

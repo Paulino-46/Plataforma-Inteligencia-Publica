@@ -110,6 +110,9 @@ class VisentService:
 
         regioes = []
         for r in rows:
+            if r.lat is None or r.lon is None:
+                continue
+
             # Avaliar qualidade da cobertura com base nos indicadores
             qualidade = self._avaliar_qualidade_rede(
                 congestionamento=r.congestionamento_avg,
