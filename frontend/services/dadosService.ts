@@ -1,4 +1,7 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "/api";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  "https://plataforma-inteligencia-publica.onrender.com";
+const API_BASE = `${API_URL.replace(/\/+$/, "").replace(/\/api$/, "")}/api`;
 
 /* ------------------------------------------------------------------ */
 /* Tipos espelhando os schemas do backend                              */
@@ -83,7 +86,8 @@ async function fetchStats<T>(path: string): Promise<T | null> {
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return (await res.json()) as T;
-  } catch {
+  } catch (error) {
+    console.error(`Não foi possível carregar /dados/${path}:`, error);
     return null;
   }
 }

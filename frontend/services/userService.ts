@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 // src/services/userService.ts
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://plataforma-inteligencia-publica.onrender.com";
