@@ -1,5 +1,3 @@
-#  App BiT — Equipe 14
-
 Web app responsiva com agente de IA para emprego, formação e saúde mental, desenvolvida com backend em **FastAPI** (Python) e frontend em **Next.js** (React/TypeScript).
 
 ---
@@ -8,9 +6,9 @@ Web app responsiva com agente de IA para emprego, formação e saúde mental, de
 
 | Ferramenta | Versão mínima |
 |------------|---------------|
-| [Docker](https://docs.docker.com/get-docker/) | 20+ |
+| [Docker](https://docs.docker.com/get-docker/)              | 20+ |
 | [Docker Compose](https://docs.docker.com/compose/install/) | v2+ |
-| [Make](https://www.gnu.org/software/make/) | qualquer |
+| [Make](https://www.gnu.org/software/make/)            | qualquer |
 
 > **Nota:** Não é necessário instalar Python nem Node.js localmente — tudo corre dentro dos containers Docker.
 
@@ -72,51 +70,51 @@ Isto vai:
 
 | Comando | Descrição |
 |---------|-----------|
-| `make docker-dev` | Constrói e inicia tudo (com logs visíveis) |
-| `make docker-up` | Inicia os containers em segundo plano |
-| `make docker-down` | Para os containers |
-| `make docker-build` | Reconstrói as imagens (sem cache) |
-| `make docker-logs` | Mostra os logs em tempo real |
-| `make docker-clean` | Para e remove containers + volumes |
-| `make db-migrate` | Executa migração dentro do container |
-| `make db-migrate-local` | Executa migração localmente |
-
+| `make docker-dev`   | Constrói e inicia tudo (com logs visíveis) |
+| `make docker-up`    | Inicia os containers em segundo plano      |
+| `make docker-down`  | Para os containers                         |
+| `make docker-build` | Reconstrói as imagens (sem cache)          |
+| `make docker-logs`  | Mostra os logs em tempo real               |
+| `make docker-clean` | Para e remove containers + volumes         |
+| `make db-migrate`   | Executa migração dentro do container       |
+| `make db-migrate-local` | Executa migração localmente            |
+                     
 ---
 
 ## Arquitectura do projecto
 
 ```
-S06-26-AB-Equipe-14/
-├── backend-fast/              # API Backend (FastAPI + Python)
+/
+├── backend-fast/               # API Backend (FastAPI + Python)
 │   ├── app/
-│   │   ├── main.py            # Ponto de entrada da aplicação
-│   │   ├── database.py        # Configuração do SQLAlchemy + sessão
-│   │   ├── models/            # Modelos do banco de dados (ORM)
-│   │   │   ├── base.py        # Base declarativa do SQLAlchemy
-│   │   │   ├── user.py        # Modelo de utilizadores
-│   │   │   └── antena.py      # Modelo de antenas
-│   │   ├── repositories/      # Acesso directo ao banco de dados
+│   │   ├── main.py             # Ponto de entrada da aplicação
+│   │   ├── database.py         # Configuração do SQLAlchemy + sessão
+│   │   ├── models/             # Modelos do banco de dados (ORM)
+│   │   │   ├── base.py         # Base declarativa do SQLAlchemy
+│   │   │   ├── user.py         # Modelo de utilizadores
+│   │   │   └── antena.py       # Modelo de antenas
+│   │   ├── repositories/       # Acesso directo ao banco de dados
 │   │   │   └── user_repository.py  # CRUD de utilizadores
-│   │   ├── routers/           # Endpoints da API
-│   │   │   ├── auth.py        # Registo e Login
-│   │   │   └── users.py       # Gestão de utilizadores
-│   │   └── services/          # Lógica de negócio
+│   │   ├── routers/            # Endpoints da API 
+│   │   │   ├── auth.py         # Registo e Login
+│   │   │   └── users.py        # Gestão de utilizadores
+│   │   └── services/           # Lógica de negócio
 │   │       └── auth_service.py # Autenticação, JWT e hashing
 │   ├── scripts/
-│   │   └── migrate.py         # Script de migração do banco
+│   │   └── migrate.py          # Script de migração do banco
 │   ├── Dockerfile
 │   └── requirements.txt
 │
-├── frontend/                  # Frontend (Next.js + TypeScript)
-│   ├── app/                   # Páginas e componentes (App Router)
-│   ├── services/              # Serviços de comunicação com API
+├── frontend/                   # Frontend (Next.js + TypeScript)
+│   ├── app/                    # Páginas e componentes (App Router)
+│   ├── services/               # Serviços de comunicação com API
 │   ├── Dockerfile
 │   └── package.json
 │
-├── docker-compose.yml         # Orquestração dos serviços
-├── Makefile                   # Atalhos de comandos
-├── .env                       # Variáveis de ambiente (não versionado)
-└── .env.example               # Exemplo das variáveis necessárias
+├── docker-compose.yml          # Orquestração dos serviços
+├── Makefile                    # Atalhos de comandos
+├── .env                        # Variáveis de ambiente (não versionado)
+└── .env.example                # Exemplo das variáveis necessárias
 ```
 
 ---
@@ -127,19 +125,19 @@ S06-26-AB-Equipe-14/
 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
-| `POST` | `/api/auth/register` | Registar novo utilizador |
-| `POST` | `/api/users/login` | Login (retorna token JWT) |
+| `POST` | `/api/auth/register` | Registar novo utilizador  |
+| `POST` | `/api/users/login`   | Login (retorna token JWT) |
 
 ### Gestão de Utilizadores
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| `GET` | `/api/users` | Listar todos os utilizadores |
-| `GET` | `/api/users/{id}` | Ver um utilizador |
-| `POST` | `/api/users` | Criar utilizador |
-| `PUT` | `/api/users/{id}` | Actualizar utilizador |
-| `PATCH` | `/api/users/{id}/deactivate` | Desactivar utilizador |
-| `DELETE` | `/api/users/{id}` | Apagar utilizador |
+| Método  | Endpoint | Descrição |
+|---------|----------|-----------|
+| `GET`   | `/api/users`         | Listar todos os utilizadores   |
+| `GET`   | `/api/users/{id}`    | Ver um utilizador              |
+| `POST`  | `/api/users`         | Criar utilizador               |
+| `PUT`   | `/api/users/{id}`    | Actualizar utilizador          |
+| `PATCH` | `/api/users/{id}/deactivate` | Desactivar utilizador  |
+| `DELETE`| `/api/users/{id}`    | Apagar utilizador              |
 
 ### Exemplo de registo
 
@@ -186,11 +184,11 @@ As tabelas são criadas automaticamente ao iniciar o servidor (via `Base.metadat
 
 ##  Stack tecnológica
 
-| Camada | Tecnologia |
-|--------|-----------|
+| Camada   | Tecnologia |
+|----------|------------|
 | Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS |
-| Backend | FastAPI, Python 3.10, SQLAlchemy 2.0 |
-| Banco de dados | PostgreSQL (Supabase) |
-| Autenticação | JWT (python-jose) + bcrypt (passlib) |
-| Infra | Docker, Docker Compose |
+| Backend  | FastAPI, Python 3.10, SQLAlchemy 2.0           |
+| Banco de dados | PostgreSQL (Supabase)                    |
+| Autenticação   | JWT (python-jose) + bcrypt (passlib)     |
+| Infra    | Docker, Docker Compose                         |
 

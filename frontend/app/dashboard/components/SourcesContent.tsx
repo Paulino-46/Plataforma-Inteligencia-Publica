@@ -17,7 +17,7 @@ import {
   BsCashCoin,
   BsExclamationTriangle,
 } from 'react-icons/bs';
-import { dadosApi } from '@/services/dadosService';
+import { dadosApi, type CrossedSourceData } from '@/services/dadosService';
 
 interface Source {
   id: string;
@@ -30,14 +30,6 @@ interface Source {
   bgColor: string;
   glow: string;
   description: string;
-}
-
-type Indicadores = Record<string, string | number>;
-
-interface CrossedSourceData {
-  fonte: string;
-  url: string;
-  indicadores: Indicadores;
 }
 
 const SOURCES: Source[] = [

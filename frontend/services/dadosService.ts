@@ -42,6 +42,12 @@ export interface CategoryDatum {
   value: number;
 }
 
+export interface CrossedSourceData {
+  fonte: string;
+  url: string;
+  indicadores: Record<string, string | number | string[]>;
+}
+
 export interface FluxoViasStats {
   total_usuarios: number;
   total_transicoes: number;
@@ -99,7 +105,7 @@ export const dadosApi = {
   fluxoViasStats: () => fetchStats<FluxoViasStats>("tensor_fluxovias"),
   odStats: () => fetchStats<ODStats>("tensorod"),
   cruzamento: (fontes: string, regiao?: string) =>
-    fetchStats<unknown[]>(`cruzamento?fontes=${encodeURIComponent(fontes)}${regiao ? `&regiao=${encodeURIComponent(regiao)}` : ""}`),
+    fetchStats<CrossedSourceData[]>(`cruzamento?fontes=${encodeURIComponent(fontes)}${regiao ? `&regiao=${encodeURIComponent(regiao)}` : ""}`),
 };
 
 
