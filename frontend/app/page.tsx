@@ -66,7 +66,7 @@ export default function LoginUserPage() {
           <p className="text-sm uppercase tracking-[0.35em] text-cyan-300">Acesso do utilizador</p>
           <h1 className="mt-4 text-3xl font-semibold text-white">Entrar na sua conta</h1>
           <p className="mt-3 text-sm text-slate-400">
-            Use o seu e-mail e senha para aceder ao painel do Bit App.
+            Use <a href="mailto:email@sistema.com.ao" className="text-cyan-400 hover:text-cyan-300 transition-colors">email@sistema.com.ao</a>  e <a className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors">engenheiro</a> para aceder ao painel do Bit App.
           </p>
         </div>
 
@@ -133,7 +133,7 @@ export default function LoginUserPage() {
             ) : "Entrar"}
           </button>
         </form>
-
+          
         <p className="mt-8 text-center text-sm text-slate-400">
           Saiba mais em {" "}
           <Link href="/home" className="font-semibold text-cyan-400 hover:text-cyan-300 transition-colors">
