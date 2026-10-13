@@ -15,6 +15,7 @@ import {
   BsPersonBadge,
   BsCashStack,
   BsSignpost,
+  BsGlobe2,
 } from 'react-icons/bs';
 import { getDashboardStats, type DashboardStats } from '@/services/dashboardService';
 import {
@@ -27,6 +28,7 @@ import {
   assinantesPorIncome,
   assinantesPorMobilidade,
   type CategoryDatum,
+  type ObservatorioChart,
 } from '@/services/dadosService';
 import ChartCard from './charts/ChartCard';
 import { CategoryBarChart, CategoryLineChart, CategoryPieChart } from './charts/Charts';
@@ -69,6 +71,11 @@ const EMPTY_DOMAIN: DomainCharts = {
 export default function DashboardContent() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [domain, setDomain] = useState<DomainCharts>(EMPTY_DOMAIN);
+  const [observatorioCharts, setObservatorioCharts] = useState<ObservatorioChart[]>([]);
+  const [observatorioLoading, setObservatorioLoading] = useState(true);
+  const [observatorioWarnings, setObservatorioWarnings] = useState<string[]>([]);
+  const [observatorioSource, setObservatorioSource] = useState<string | null>(null);
+  const [observatorioPeriod, setObservatorioPeriod] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   // Loading por fonte de dados: cada gráfico revela-se assim que os seus dados
   // chegam, sem esperar pelos payloads mais pesados (ex.: assinantes ~33 MB).
@@ -91,6 +98,23 @@ export default function DashboardContent() {
       })
       .catch(() => alive && setError('Não foi possível carregar os dados de utilizadores.'))
       .finally(() => alive && setLoading(false));
+
+    dadosApi
+      .observatorioStats()
+      .then((data) => {
+        if (!alive) return;
+        if (data) {
+          setObservatorioCharts(data.charts);
+          setObservatorioWarnings(data.warnings);
+          setObservatorioSource(data.source);
+          setObservatorioPeriod(data.period);
+        } else {
+          setObservatorioWarnings([
+            'Não foi possível carregar os indicadores publicados pelo Observatório TIC.',
+          ]);
+        }
+      })
+      .finally(() => alive && setObservatorioLoading(false));
 
     // Dados de domínio — carregados de forma independente (progressiva) para
     // que os gráficos rápidos apareçam já e os pesados não bloqueiem a página.
@@ -327,6 +351,57 @@ export default function DashboardContent() {
             <CategoryBarChart data={domain.fluxos} horizontal color="#a855f7" />
           </ChartCard>
         </div>
+      </section>
+
+      {/* ============ SECÇÃO: INDICADORES PUBLICADOS PELO INACOM ============ */}
+      <section className="space-y-4 sm:space-y-6">
+        <div className="flex flex-wrap items-center gap-2">
+          <BsGlobe2 className="text-cyan-400" />
+          <h3 className="text-white font-bold tracking-tight">Indicadores do sector</h3>
+          <span className="text-[10px] text-slate-500 font-mono uppercase tracking-widest">
+            {observatorioSource ?? 'Observatório TIC · INACOM'}
+          </span>
+        </div>
+
+        {observatorioWarnings.length > 0 && (
+          <div
+            role="status"
+            className="space-y-1 rounded-2xl border border-amber-500/20 bg-amber-500/10 px-4 py-3"
+          >
+            {observatorioWarnings.map((warning) => (
+              <p key={warning} className="text-sm text-amber-200">{warning}</p>
+            ))}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {observatorioLoading
+            ? Array.from({ length: 7 }).map((_, index) => (
+                <ChartCard
+                  key={index}
+                  title="A carregar indicador do INACOM"
+                  loading
+                >
+                  <></>
+                </ChartCard>
+              ))
+            : observatorioCharts.map((chart) => (
+                <ChartCard
+                  key={chart.id}
+                  title={chart.title}
+                  subtitle={chart.subtitle}
+                  icon={<BsBroadcastPin />}
+                  empty={chart.data.length === 0}
+                >
+                  <CategoryBarChart data={chart.data} horizontal />
+                </ChartCard>
+              ))}
+        </div>
+        {!observatorioLoading && observatorioCharts.length > 0 && (
+          <p className="text-[11px] text-slate-500">
+            Período: {observatorioPeriod}
+          </p>
+        )}
       </section>
 
       {/* ============ SECÇÃO: ASSINANTES (DEMOGRAFIA) ============ */}
