@@ -135,9 +135,9 @@ export default function LoginUserPage() {
         </form>
 
         <p className="mt-8 text-center text-sm text-slate-400">
-          Não tem conta?{" "}
-          <Link href="/register" className="font-semibold text-cyan-400 hover:text-cyan-300 transition-colors">
-            Cadastre-se
+          Saiba mais em {" "}
+          <Link href="/home" className="font-semibold text-cyan-400 hover:text-cyan-300 transition-colors">
+            Descrição do Projecto
           </Link>
         </p>
       </div>

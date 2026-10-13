@@ -192,3 +192,9 @@ As tabelas são criadas automaticamente ao iniciar o servidor (via `Base.metadat
 | Autenticação   | JWT (python-jose) + bcrypt (passlib)     |
 | Infra    | Docker, Docker Compose                         |
 
+
+|          User       |     Password    |
+|---------------------|-----------------|
+|email@sistema.com.ao |  engenheiro                        |
+|                     |                                    |
+|URL: https://plataforma-inteligencia-publica.vercel.app/  |
