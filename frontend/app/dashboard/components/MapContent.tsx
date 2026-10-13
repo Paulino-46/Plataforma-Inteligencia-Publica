@@ -30,12 +30,14 @@ const STATUS_STYLE: Record<MapStatus, string> = {
   Online: 'bg-emerald-500',
   Manutenção: 'bg-amber-500',
   Offline: 'bg-red-500',
+  Referência: 'bg-violet-500',
 };
 
 export default function MapContent() {
   const [locations, setLocations] = useState<MapLocation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sourceWarning, setSourceWarning] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [focus, setFocus] = useState<[number, number] | null>(null);
 
@@ -44,7 +46,8 @@ export default function MapContent() {
     getMapLocations()
       .then((data) => {
         if (!alive) return;
-        setLocations(data);
+        setLocations(data.locations);
+        setSourceWarning(data.warnings.length ? data.warnings.join(' ') : null);
         setError(null);
       })
       .catch(() => alive && setError('Não foi possível carregar os dados do mapa. Verifique a ligação e a autenticação da API.'))
@@ -57,7 +60,11 @@ export default function MapContent() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return locations;
-    return locations.filter((l) => l.name.toLowerCase().includes(q));
+    return locations.filter(
+      (location) =>
+        location.name.toLowerCase().includes(q) ||
+        location.detail?.toLowerCase().includes(q)
+    );
   }, [locations, search]);
 
   // Ao pesquisar, foca no primeiro resultado.
@@ -68,6 +75,7 @@ export default function MapContent() {
   }, [search, filtered]);
 
   const onlineCount = locations.filter((l) => l.status === 'Online').length;
+  const referenceCount = locations.filter((l) => l.status === 'Referência').length;
 
   return (
     <div className="p-4 sm:p-8 space-y-6 h-full flex flex-col animate-in fade-in zoom-in-95 duration-700">
@@ -79,7 +87,7 @@ export default function MapContent() {
             Mapa Dinâmico
           </h1>
           <p className="text-slate-400 mt-1 text-xs sm:text-sm">
-            Monitoramento geográfico de infraestruturas e projetos · {onlineCount}/{locations.length} online
+            {onlineCount} ponto(s) de rede online · {referenceCount} referência(s) geográfica(s) do INACOM
           </p>
         </div>
 
@@ -90,7 +98,7 @@ export default function MapContent() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Pesquisar região..."
+              placeholder="Pesquisar região ou província..."
               className="bg-slate-900/60 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-sm text-white outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 w-full lg:w-64 transition-all"
             />
           </div>
@@ -103,6 +111,12 @@ export default function MapContent() {
           </button>
         </div>
       </div>
+
+      {sourceWarning && (
+        <p role="status" className="text-xs text-amber-300">
+          {sourceWarning}
+        </p>
+      )}
 
       {/* Viewport do Mapa */}
       <div className="flex-1 min-h-[500px] relative rounded-3xl border border-white/10 bg-slate-950/50 overflow-hidden shadow-2xl z-0">
@@ -125,9 +139,9 @@ export default function MapContent() {
             <div className="bg-slate-900/85 border border-white/10 p-5 rounded-2xl backdrop-blur-md shadow-2xl space-y-4">
               <div className="flex items-center justify-between border-b border-white/5 pb-2">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Status da Rede
+                  Pontos no mapa
                 </span>
-                <div className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <div className="flex h-2 w-2 rounded-full bg-violet-500" />
               </div>
               <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
                 {filtered.length === 0 && (
@@ -153,7 +167,7 @@ export default function MapContent() {
               </div>
               <div className="flex items-center gap-2 pt-1 text-[10px] text-slate-500">
                 <BsInfoCircle size={12} className="text-cyan-400 shrink-0" />
-                <span>Clique numa região para centrar o mapa.</span>
+                <span>Clique num ponto para centrar o mapa. Referências INACOM mostram capitais provinciais, não antenas.</span>
               </div>
             </div>
           </div>

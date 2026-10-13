@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, List, Any
 from datetime import date
 
@@ -42,12 +42,14 @@ class RegiaoMapa(BaseModel):
     concentracao:  Optional[int]  = None
     cobertura_rede: Optional[str] = None
     indicadores:   Optional[dict] = None
+    fonte:         Optional[str] = None
 
     model_config = {"from_attributes": True}
 
 
 class MapaResponse(BaseModel):
     regioes: List[RegiaoMapa]
+    avisos: List[str] = Field(default_factory=list)
 
 
 

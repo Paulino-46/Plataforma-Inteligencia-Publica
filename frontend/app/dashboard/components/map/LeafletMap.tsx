@@ -10,6 +10,7 @@ const STATUS_COLOR: Record<MapStatus, string> = {
   Online: '#10b981',      // emerald-500
   Manutenção: '#f59e0b',  // amber-500
   Offline: '#ef4444',     // red-500
+  Referência: '#8b5cf6',
 };
 
 // Marcador customizado (sem depender dos assets padrão do Leaflet, que quebram no bundler).
@@ -68,6 +69,7 @@ export default function LeafletMap({ locations, center, focus, zoom = 6 }: Leafl
                 {loc.status}
               </span>
               {loc.detail && <p style={{ margin: '4px 0 0', fontSize: 11, color: '#475569' }}>{loc.detail}</p>}
+              {loc.source && <p style={{ margin: '4px 0 0', fontSize: 11, color: '#475569' }}>Fonte: {loc.source}</p>}
             </div>
           </Popup>
         </Marker>
