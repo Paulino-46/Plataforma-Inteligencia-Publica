@@ -43,6 +43,9 @@ ALGORITHM=HS256
 
 # URL do backend (usada pelo frontend)
 NEXT_PUBLIC_API_URL=http://localhost:8000
+
+# Chave da API Cohere usada pelo agente de IA
+COHERE_API_KEY=sua_chave_cohere
 ```
 
 ### 3. Iniciar os serviços
