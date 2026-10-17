@@ -42,20 +42,6 @@ export interface CategoryDatum {
   value: number;
 }
 
-export interface ObservatorioChart {
-  id: string;
-  title: string;
-  subtitle: string;
-  data: CategoryDatum[];
-}
-
-export interface ObservatorioDashboardData {
-  charts: ObservatorioChart[];
-  warnings: string[];
-  source: string;
-  period: string;
-}
-
 export interface CrossedSourceData {
   fonte: string;
   url: string;
@@ -118,7 +104,6 @@ export const dadosApi = {
   concStats: () => fetchStats<ConcentracaoStats>("tensor_concentracao"),
   fluxoViasStats: () => fetchStats<FluxoViasStats>("tensor_fluxovias"),
   odStats: () => fetchStats<ODStats>("tensorod"),
-  observatorioStats: () => fetchStats<ObservatorioDashboardData>("observatorio"),
   cruzamento: (fontes: string, regiao?: string) =>
     fetchStats<CrossedSourceData[]>(`cruzamento?fontes=${encodeURIComponent(fontes)}${regiao ? `&regiao=${encodeURIComponent(regiao)}` : ""}`),
 };
